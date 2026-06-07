@@ -224,31 +224,5 @@ Most existing AI music generation systems focus on generating complete songs usi
 
 The primary contribution of this project lies in the synchronization and orchestration layer, which ensures that lyrics, melody, rhythm, and harmony remain aligned throughout the generation process.
 
----
-
-## Future Enhancements
-
-* Web-based music studio interface
-* Real-time song editing
-* Multiple singer voices
-* Genre-specific fine-tuning
-* User-controlled melody editing
-* Automatic music mastering
-* Multi-language lyric generation
-
----
-
-## Contributors
-
-Team IDEATORS
-
-* Vyakhya Namdev
-* Aryan Raj
-* Harshita Gupta
-
----
-
-## License
-
-This project is developed for academic and research purposes.
+---is project is developed for academic and research purposes.
 All third-party libraries and models retain their respective licenses.
