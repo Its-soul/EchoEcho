@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EchoEcho</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">EchoEcho</p>
+      <h1>EchoEcho</h1>
+      <p class="subtitle">Beat writer's block with AI-generated musical ideas.</p>
+    </header>
+
+    <form id="generator-form" class="app-grid">
+      <section class="card">
+        <div class="section-heading">
+          <h2>Mood</h2>
+        </div>
+        <div id="moods" class="checkbox-grid" data-group="moods"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-heading">
+          <h2>Genre</h2>
+        </div>
+        <div id="genres" class="checkbox-grid" data-group="genres"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-heading">
+          <h2>Theme</h2>
+        </div>
+        <div id="themes" class="checkbox-grid" data-group="themes"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-heading">
+          <h2>Instruments</h2>
+        </div>
+        <div id="instruments" class="checkbox-grid" data-group="instruments"></div>
+      </section>
+
+      <section class="card controls-card">
+        <div class="field">
+          <label for="tempo">Tempo <span id="tempo-value">90 BPM</span></label>
+          <input id="tempo" type="range" min="60" max="160" value="90" />
+        </div>
+
+        <div class="field">
+          <label for="complexity">Complexity</label>
+          <select id="complexity">
+            <option>Simple</option>
+            <option selected>Moderate</option>
+            <option>Rich</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="energy">Energy <span id="energy-value">4</span></label>
+          <input id="energy" type="range" min="1" max="10" value="4" />
+        </div>
+      </section>
+
+      <section class="card prompt-card">
+        <label for="custom-prompt">Additional Prompt</label>
+        <textarea
+          id="custom-prompt"
+          rows="8"
+          placeholder="Describe texture, rhythm, arrangement, reference mood, or anything else that would spark a song idea."
+        ></textarea>
+      </section>
+
+      <section class="action-panel">
+        <button id="generate-button" type="submit">
+          <span class="button-text">Generate Inspiration</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <button id="history-button" class="secondary-button" type="button">Song Library</button>
+        <p id="status-message" class="status-message" role="status"></p>
+      </section>
+    </form>
+
+    <section id="progress-panel" class="progress-panel" hidden>
+      <div class="progress-ring" aria-hidden="true">
+        <svg viewBox="0 0 120 120">
+          <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+          <circle id="ring-progress" class="ring-progress" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <span id="progress-percent">0%</span>
+      </div>
+
+      <div class="progress-details">
+        <p id="progress-stage" class="progress-stage">Preparing prompt...</p>
+        <div class="progress-bar" aria-label="Generation progress">
+          <span id="progress-fill" class="progress-fill"></span>
+          <span id="progress-note" class="progress-note" aria-hidden="true">&#9834;</span>
+        </div>
+        <div class="progress-meta">
+          <span>Elapsed: <strong id="elapsed-time">00:00</strong></span>
+          <span>Estimated remaining: <strong id="remaining-time">--:--</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="results" hidden>
+      <article class="card result-card">
+        <p class="success-label">Song Created Successfully</p>
+        <h2>Song ID</h2>
+        <div class="song-id-row">
+          <strong id="song-id">----</strong>
+          <button id="copy-song-id" class="icon-button" type="button">Copy Song ID</button>
+        </div>
+        <h2>Generation Time</h2>
+        <p id="generation-time"></p>
+        <h2>Audio File</h2>
+        <p id="audio-file"></p>
+        <h2>Prompt Used</h2>
+        <p id="prompt-used"></p>
+      </article>
+
+      <article class="card result-card">
+        <h2>Audio Player</h2>
+        <audio id="audio-player" controls></audio>
+        <div class="result-actions">
+          <a id="download-link" class="download-button" download="echoecho.wav">Download</a>
+          <button id="result-history-button" class="secondary-button" type="button">History</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="song-library" class="song-library">
+      <div class="library-heading">
+        <h2>Song Library</h2>
+        <button id="refresh-history" class="secondary-button" type="button">Refresh</button>
+      </div>
+      <div id="history-list" class="history-list"></div>
+    </section>
+
+    <section id="error-card" class="error-card" hidden></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
