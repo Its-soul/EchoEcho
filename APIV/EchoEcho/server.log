@@ -1,4 +1,0 @@
-INFO:     127.0.0.1:60640 - "GET /status HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60640 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60640 - "GET /favicon.ico HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59931 - "GET /status HTTP/1.1" 200 OK

@@ -1,228 +1,110 @@
-# Echo Echo 🎵
+# EchoEcho
 
-Echo Echo is a multi-agent AI music generation system designed to simulate the workflow of a real music production team. Instead of relying on a single end-to-end music generation model, the system breaks the music creation process into multiple specialized agents that collaborate to produce synchronized lyrics, melody, harmony, and vocals.
+EchoEcho is one FastAPI app with one HTML/CSS/JavaScript frontend and two generation modes:
 
-The project focuses on orchestration, synchronization, and iterative improvement of generated music through agent collaboration and feedback loops.
+- Fast API Generation: uses the existing KieAI/Suno API backend.
+- Copyright-free MusicGen Generation: uses the local `facebook/musicgen-small` model.
 
----
+Both modes save audio files in `backend/generated/` and append records to `backend/song_history.json`.
 
-## Overview
-
-Creating a complete song involves multiple creative tasks such as understanding mood, composing harmony, generating melodies, writing lyrics, synchronizing vocals, and evaluating quality.
-
-Echo Echo approaches this challenge using a collection of independent AI agents managed by a central coordinator called the **Lead Producer**.
-
-Each agent is responsible for a specific task:
-
-* Mood Analysis
-* Chord Progression Generation
-* Melody Generation
-* Lyrics Generation
-* Lyrics-Melody Synchronization
-* Quality Evaluation
-* Singing Voice Synthesis
-
-This architecture provides greater transparency, controllability, and extensibility compared to traditional black-box music generation systems.
-
----
-
-## Key Features
-
-* Multi-agent architecture for music creation
-* Automatic mood and genre analysis
-* Chord progression generation
-* MIDI melody generation
-* AI-generated lyrics
-* Syllable-to-note synchronization
-* Quality assessment using a Judge Agent
-* Iterative refinement through feedback loops
-* Singing voice synthesis support
-* Fully based on open-source tools and models
-
----
-
-## System Architecture
+## Final Structure
 
 ```text
-User Prompt
-      │
-      ▼
-Mood Agent
-      │
-      ▼
-Chord Agent
-      │
-      ▼
-Melody Agent
-      │
-      ▼
-Lyrics Agent
-      │
-      ▼
-Sync Agent
-      │
-      ▼
-Judge Agent
-      │
-      ▼
-Voice Agent
-      │
-      ▼
-Final Song Output
+APIV/EchoEcho/
+|-- backend/
+|   |-- __init__.py
+|   |-- main.py
+|   |-- api_generator.py
+|   |-- music_generator.py
+|   |-- generated/
+|   |-- static/
+|   |-- song_history.json
+|   `-- kiai_callbacks.json
+|-- frontend/
+|   |-- index.html
+|   |-- script.js
+|   `-- styles.css
+|-- tests/
+|-- .env
+|-- README.md
+`-- requirements.txt
 ```
 
-The Lead Producer coordinates communication between all agents and handles revision cycles whenever the Judge Agent identifies quality issues.
----
+## Setup
 
-## Installation
-
-### Clone Repository
-
-```bash
-git clone <repository-url>
-cd echo-echo
-```
-
-### Create Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-Activate environment:
-
-Windows
-
-```bash
-venv\Scripts\activate
-```
-
-Linux/macOS
-
-```bash
-source venv/bin/activate
-```
-
-### Install Dependencies
-
-```bash
+```powershell
+cd APIV\EchoEcho
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
----
+Run the merged app:
 
-## Install Ollama
-
-Download and install Ollama.
-
-Pull the required model:
-
-```bash
-ollama pull llama3
+```powershell
+python -m backend.main
 ```
 
-Verify that Ollama is running locally before starting the application.
-
----
-
-## Running the Project
-
-Start the FastAPI server:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Server will start at:
+Open:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-API documentation:
+The backend serves `frontend/index.html`, `frontend/styles.css`, `frontend/script.js`, static files, and generated audio files.
 
-```text
-http://127.0.0.1:8000/docs
+## Environment
+
+Store local environment values in `.env`.
+
+```env
+SERPAPI_API_KEY=your_serpapi_key_here
+GROQ_API_KEY=your_groq_key_here
+KIEAI_API_KEY=your_key_here
+PUBLIC_BASE_URL=https://your-public-domain-or-ngrok-url
+KIEAI_CALLBACK_PATH=/api/kieai/callback
+TRIM_DURATION_SECONDS=30
 ```
 
----
+`SERPAPI_API_KEY` powers copyright search and `GROQ_API_KEY` powers lyrics and copyright LLM analysis.
+`KIEAI_API_KEY` is required for Fast API Generation. `PUBLIC_BASE_URL` must be publicly reachable because KieAI posts callback events to it. For local development, expose port 8000 with a tunnel such as ngrok and put the HTTPS forwarding URL in `PUBLIC_BASE_URL`.
 
-## Example Request
+MusicGen mode does not need API keys, but it downloads and loads `facebook/musicgen-small` and needs enough CPU/GPU memory for local generation.
+
+## API
+
+Unified generation endpoint:
+
+```http
+POST /generate
+```
 
 ```json
 {
-  "prompt": "Generate a romantic piano song about memories"
+  "prompt": "lofi relaxing beat",
+  "mode": "api",
+  "duration": 15,
+  "fast": true
 }
 ```
 
----
+Use `mode: "api"` for Fast API Generation. Use `mode: "musicgen"` for local MusicGen. If `mode` is missing, the backend defaults to `"musicgen"`. Unknown modes return a clear `400` error.
 
-## Example Output
+Successful response:
 
 ```json
 {
-  "mood": {
-    "emotion": "romantic",
-    "tempo": 80,
-    "key": "C Major"
-  },
-  "chords": [
-    "C",
-    "Am",
-    "F",
-    "G"
-  ],
-  "lyrics": "...",
-  "alignment": [...]
+  "success": true,
+  "mode": "api",
+  "audio_url": "/generated/ECHO_ABCD_original.mp3",
+  "filename": "ECHO_ABCD_original.mp3"
 }
 ```
 
----
+Compatibility endpoints are still available, including `/history`, `/songs`, `/generation-status`, `/audio/{song_id}.wav`, `/download/{code}/original`, `/api/library/{code}/trim`, and KieAI callback routes.
 
-## Development Roadmap
+## Tests
 
-### Phase 1 - Foundation
-
-* Mood Agent
-* Chord Agent
-* Melody Agent
-* Lyrics Agent
-
-Output:
-
-* Chord Progression
-* MIDI Melody
-* Lyrics
-
-### Phase 2 - Synchronization & Evaluation
-
-* Sync Agent
-* Judge Agent
-* Lead Producer Feedback Loop
-
-Output:
-
-* Aligned Lyrics and Melody
-* Quality Assessment
-* Iterative Refinement
-
-### Phase 3 - Singing Voice Synthesis
-
-* DiffSinger Integration
-* HiFi-GAN Vocoder
-* Final Song Generation
-
-Output:
-
-* Fully Synthesized Song (.wav)
-
----
-
-## Research Motivation
-
-Most existing AI music generation systems focus on generating complete songs using a single model. Echo Echo explores a different direction by introducing a collaborative multi-agent framework where independent agents handle specific creative responsibilities while maintaining synchronization between musical components.
-
-The primary contribution of this project lies in the synchronization and orchestration layer, which ensures that lyrics, melody, rhythm, and harmony remain aligned throughout the generation process.
-
----is project is developed for academic and research purposes.
-All third-party libraries and models retain their respective licenses.
+```powershell
+pytest -q
+```
